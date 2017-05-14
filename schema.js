@@ -1,5 +1,6 @@
 import {
     GraphQLSchema,
+    GraphQLInt,
     GraphQLString,
     GraphQLObjectType,
     GraphQLList
@@ -9,6 +10,7 @@ import mongoose from 'mongoose';
 let Schema = mongoose.Schema;
 
 let articleSchema = new Schema({
+    id: {type: Number, require: true},
     title: {type: String, require: true},
     content: {type: String, require: true},
     tags: [{
@@ -21,6 +23,7 @@ mongoose.connect('localhost:27017');
 let ArticleData = mongoose.model('articles', articleSchema);
 
 let data = new ArticleData({
+    id: "1",
     title: "Go To Statement Considered Harmful",
     content: "Don't fucking use goto in COBOL",
     tags: [
@@ -29,12 +32,11 @@ let data = new ArticleData({
     author: "Edsger Dijkstra"
 });
 
-
 (async () => {
     await data.save();
-    let result = await ArticleData.find();
-    console.log(result)
-});
+    let result = await ArticleData.find({id: 1});
+    console.log(result);
+})();
 
 
 const TagType = new GraphQLObjectType({
@@ -51,10 +53,8 @@ const ArticleType = new GraphQLObjectType({
     description: 'One of the articles',
 
     fields: () => ({
-        title: {
-            type: GraphQLString,
-            resolve: (article) => (article.title)
-        },
+        id: {type: GraphQLInt},
+        title: {type: GraphQLString},
         content: {type: GraphQLString},
         tags: {
             type: new GraphQLList(TagType)
@@ -71,6 +71,13 @@ const QueryType = new GraphQLObjectType({
         articles: {
             type: new GraphQLList(ArticleType),
             resolve: (root, args) => ArticleData.find()
+        },
+        article: {
+            type: ArticleType,
+            args: {
+                id: {type: GraphQLInt}
+            },
+            resolve: (root, args) => ArticleData.findOne({id: args.id})
         }
     })
 });
