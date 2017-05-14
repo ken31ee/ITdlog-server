@@ -4,13 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "babel-node app.js --presets es2015,stage-2"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.2",
     "express-graphql": "^0.6.4",
-    "graphql": "^0.9.3"
+    "graphql": "^0.9.3",
+    "mongoose": "^4.9.9"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-node6": "^11.0.0"
   }
 }
