@@ -5,22 +5,24 @@ import {
     GraphQLObjectType,
     GraphQLList
 } from 'graphql'
+import GraphQLDate from 'graphql-date';
 
 import {ArticleData} from './db';
 
 let data = new ArticleData({
-    id: "1",
+    id: 0,
+    data: Date.now(),
     title: "Go To Statement Considered Harmful",
     content: "Don't fucking use goto in COBOL",
     tags: [
-        {name: 'Imperative Programming'}, {name: 'Programming Principle'}
+        {name: 'Imperative Programming', color: 'orange'}, {name: 'Programming Principle', color: 'dodgerblue'}
     ],
     author: "Edsger Dijkstra"
 });
 
 (async () => {
-    await data.save();
-    let result = await ArticleData.find({id: 1});
+    //await data.save();
+    let result = await ArticleData.find({id: 0});
     console.log(result);
 })();
 
@@ -30,7 +32,8 @@ const TagType = new GraphQLObjectType({
     description: 'Articles classifier',
 
     fields: () => ({
-        name: {type: GraphQLString}
+        name: {type: GraphQLString},
+        color: {type: GraphQLString}
     })
 });
 
@@ -40,6 +43,7 @@ const ArticleType = new GraphQLObjectType({
 
     fields: () => ({
         id: {type: GraphQLInt},
+        date: {type: GraphQLDate},
         title: {type: GraphQLString},
         content: {type: GraphQLString},
         tags: {
