@@ -6,21 +6,7 @@ import {
     GraphQLList
 } from 'graphql'
 
-import mongoose from 'mongoose';
-let Schema = mongoose.Schema;
-
-let articleSchema = new Schema({
-    id: {type: Number, require: true},
-    title: {type: String, require: true},
-    content: {type: String, require: true},
-    tags: [{
-        name: {type: String, require: true}
-    }],
-    author: {type: String, require: true}
-});
-
-mongoose.connect('localhost:27017');
-let ArticleData = mongoose.model('articles', articleSchema);
+import {ArticleData} from './db';
 
 let data = new ArticleData({
     id: "1",
