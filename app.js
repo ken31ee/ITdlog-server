@@ -1,11 +1,17 @@
-var express = require('express');
-var graphqlHTTP = require('express-graphql');
+import express from 'express';
+import graphqlHTTP from 'express-graphql';
 import schema from './schema';
 import cors from 'cors';
 
+let app = express();
 
-var app = express();
-app.use('/graphql', cors(), graphqlHTTP({
+// for testing, only from localhost:8080 is allowed
+let corsOptions = {
+    origin: 'http://localhost:8080',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use('/graphql', cors(corsOptions), graphqlHTTP({
     schema,
     graphiql: true,
 }));
