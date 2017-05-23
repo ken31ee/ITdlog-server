@@ -1,0 +1,42 @@
+machine:
+  environment:
+      PROJECT_ID: graceful-splice-166711
+      CLUSTER_NAME: cluster-1
+      COMPUTE_ZONE: asia-east1-c
+      #As specified in Deployment.yml
+      DEPLOYMENT_NAME: test-server
+      CONTAINER_NAME: node-app
+
+  node:
+    version: 7.10.0
+
+test:
+  override:
+    - npm run test
+
+#Ensure that gcloud and kubectl are updated.
+dependencies:
+  pre:
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 120.0.0
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 120.0.0 kubectl
+
+deployment:
+    production:
+        branch: master
+        commands:
+        # Save the string to a text file
+        - echo $SERVICE_KEY > key.txt
+        # Decode the Service Account
+        - base64 -i key.txt -d > ${HOME}/gcloud-service-key.json
+        # Authenticate CircleCI with the service account file
+        - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account ${ACCOUNT_ID} --key-file ${HOME}/gcloud-service-key.json
+        # Set the default project
+        - sudo /opt/google-cloud-sdk/bin/gcloud config set project $PROJECT_ID
+        # Set the default container
+        - sudo /opt/google-cloud-sdk/bin/gcloud --quiet config set container/cluster $CLUSTER_NAME
+        # Set the compute zone
+        - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone $COMPUTE_ZONE
+        # Get the cluster credentials.
+        - sudo /opt/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials $CLUSTER_NAME
+        # Start good old Docker
+        - sudo service docker start
