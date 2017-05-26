@@ -17,7 +17,7 @@ test:
 #Ensure that gcloud and kubectl are updated.
 dependencies:
   pre:
-    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 120.0.0
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 150.0.0
     - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 120.0.0 kubectl
 
 deployment:
@@ -28,6 +28,8 @@ deployment:
         - echo $SERVICE_KEY > key.txt
         # Decode the Service Account
         - base64 -i key.txt -d > ${HOME}/gcloud-service-key.json
+        #
+        - sudo /opt/google-cloud-sdk/bin/gcloud config set container/use_client_certificate True
         # Authenticate CircleCI with the service account file
         - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account ${ACCOUNT_ID} --key-file ${HOME}/gcloud-service-key.json
         # Set the default project
