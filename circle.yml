@@ -5,7 +5,7 @@ machine:
       COMPUTE_ZONE: asia-east1-c
       #As specified in Deployment.yml
       DEPLOYMENT_NAME: test-server
-      CONTAINER_NAME: node-app
+      CONTAINER_NAME: node-server
 
   node:
     version: 7.10.0
