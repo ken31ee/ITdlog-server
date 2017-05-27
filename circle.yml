@@ -17,18 +17,16 @@ test:
 #Ensure that gcloud and kubectl are updated.
 dependencies:
   pre:
-    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 150.0.0
-    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update --version 120.0.0 kubectl
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update
+    - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update kubectl
 
 deployment:
     production:
         branch: master
         commands:
-        # Save the string to a text file
-        - echo $SERVICE_KEY > key.txt
         # Decode the Service Account
-        - base64 -i key.txt -d > ${HOME}/gcloud-service-key.json
-        #
+        - echo $SERVICE_KEY | base64 --decode -i > ${HOME}/gcloud-service-key.json
+        # set True
         - sudo /opt/google-cloud-sdk/bin/gcloud config set container/use_client_certificate True
         # Authenticate CircleCI with the service account file
         - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
@@ -37,7 +35,7 @@ deployment:
         # Set the default container
         - sudo /opt/google-cloud-sdk/bin/gcloud --quiet config set container/cluster $CLUSTER_NAME
         # Set the compute zone
-        - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone $COMPUTE_ZONE
+        - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone ${COMPUTE_ZONE}
         # Get the cluster credentials.
         - sudo /opt/google-cloud-sdk/bin/gcloud --quiet container clusters get-credentials $CLUSTER_NAME
         # Start good old Docker
