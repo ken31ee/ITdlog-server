@@ -19,7 +19,7 @@ let articleSchema = new Schema({
     author: {type: String, require: true}
 });
 
-mongoose.connect('localhost:27017');
+mongoose.connect('mongodb://localhost:27017/itdlog');
 let ArticleData = mongoose.model('articles', articleSchema);
 
 let data = new ArticleData({
